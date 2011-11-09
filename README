@@ -1,0 +1,24 @@
+Daemonette
+==========
+
+Daemonette runs a block of code as a daemon, with one additional feature: if
+another block with the same name is already running, it will be killed before
+running the new block.
+
+Old processes are killed by sending SIGHUP. If after a reasonable period (20s),
+the process has not gone away, SIGKILL is sent.
+
+How to use it
+-------------
+
+    Daemonette.run("foo") do
+      # Your endlessly-running job here
+    end
+
+After deployment:
+
+    Daemonette.run("foo") do
+      # Your endlessly-running job here
+    end
+
+(I.e. the same thing.) The first job will be killed before the second is run.
