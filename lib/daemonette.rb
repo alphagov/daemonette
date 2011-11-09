@@ -27,6 +27,11 @@ class Daemonette
     Process.daemon(true)
     write_pid Process.pid
     yield
+  rescue Exception => e
+    File.open("#{name}.daemonette-dump", "w") do |f|
+      f.puts e.class, e, *e.backtrace
+    end
+    raise e
   end
 
 private
