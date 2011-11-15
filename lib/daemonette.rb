@@ -23,15 +23,20 @@ class Daemonette
   end
 
   def run(&blk)
-    kill_antecedent
-    Process.daemon(true)
-    write_pid Process.pid
-    yield
-  rescue Exception => e
-    File.open("#{name}.daemonette-dump", "w") do |f|
-      f.puts e.class, e, *e.backtrace
-    end
-    raise e
+    forked_pid = fork {
+      begin
+        kill_antecedent
+        Process.daemon(true)
+        write_pid Process.pid
+        yield
+      rescue Exception => e
+        File.open("#{name}.daemonette-dump", "w") do |f|
+          f.puts e.class, e, *e.backtrace
+        end
+        raise e
+      end
+    }
+    Process.detach forked_pid if forked_pid
   end
 
 private
