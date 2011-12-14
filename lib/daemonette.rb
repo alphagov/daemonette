@@ -36,7 +36,10 @@ class Daemonette
         raise e
       end
     }
-    Process.detach forked_pid if forked_pid
+    if forked_pid
+      Process.detach forked_pid
+      $0 = "#{$0} (DAEMONETTE: #{@name})"
+    end
   end
 
 private
